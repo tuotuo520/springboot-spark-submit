@@ -30,9 +30,9 @@ public class SparkStarter {
                 //spark home 路径
                 .setSparkHome("/opt/cloudera/parcels/CDH-6.0.1-1.cdh6.0.1.p0.590678/lib/spark")
                 .setMaster("yarn")
-                .setConf("spark.driver-cores","2")
-                .setConf("spark.driver.memory", "2g")
-                .setConf("spark.executor.memory", "2g")
+                .setConf("spark.driver-cores","1")
+                .setConf("spark.driver.memory", "1g")
+                .setConf("spark.executor.memory", "1g")
                 .setConf("spark.executor.cores", "2")
                 .setConf("spark.num.executors", "2")
                 //关闭动态分配
