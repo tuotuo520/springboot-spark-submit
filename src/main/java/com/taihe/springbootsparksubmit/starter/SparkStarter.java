@@ -42,7 +42,7 @@ public class SparkStarter {
                 .setAppResource("/YunLiKe/jar/taihe/serach/serach-data-1.0-SNAPSHOT-jar-with-dependencies.jar")
                 .setMainClass("com.taihe.serach.SerachJob")
                 //参数
-                .addAppArgs(msg)
+                .addAppArgs(replaceStr(msg))
                 .setDeployMode("cluster")
                 .startApplication(new SparkAppHandle.Listener() {
                     @Override
@@ -54,5 +54,15 @@ public class SparkStarter {
                         log.info("********** submitSqlTask info  changed  **********");
                     }
                 });
+    }
+
+    /**
+     * 解决spark任务提交最后三个}}}只有一个的情况
+     * 问题记录： https://blog.csdn.net/u010814849/article/details/78752074
+     * @param arg
+     * @return
+     */
+    private static String replaceStr(String arg){
+        return arg.replaceAll("}}","} }");
     }
 }
