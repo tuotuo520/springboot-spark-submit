@@ -3,6 +3,8 @@ package com.taihe.springbootsparksubmit.starter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
@@ -15,32 +17,46 @@ import java.io.IOException;
  * @ClassName SparkStarter
  */
 @CommonsLog
+@Configuration
 public class SparkStarter {
 
+    @Value("${sparkHome}")
+    private String SPARK_HOME;
 
+    @Value("${appName}")
+    private String APP_NAME;
+
+    @Value("${appResource}")
+    private String APP_RESOURCE;
+    @Value("${mainClass}")
+    private String MAIN_CLASS;
 
     /**
      * 通过消息作为参数启动spark任务
+     *
      * @param msg
      * @throws IOException
      */
-    public static void submitSqlTask(String msg) throws IOException {
+    public void submitSqlTask(String msg) throws IOException {
         SparkAppHandle handler = new SparkLauncher()
-                .setAppName("SerachJob")
+//                .setAppName("SerachJob")
+//                //spark home 路径
+//                .setSparkHome("/opt/cloudera/parcels/CDH-6.0.1-1.cdh6.0.1.p0.590678/lib/spark")
+                .setAppName(APP_NAME)
                 //spark home 路径
-                .setSparkHome("/opt/cloudera/parcels/CDH-6.0.1-1.cdh6.0.1.p0.590678/lib/spark")
+                .setSparkHome(SPARK_HOME)
                 .setMaster("yarn")
-                .setConf("spark.driver-cores","1")
+                .setConf("spark.driver-cores", "1")
                 .setConf("spark.driver.memory", "1g")
                 .setConf("spark.executor.memory", "1g")
                 .setConf("spark.executor.cores", "2")
                 .setConf("spark.num.executors", "2")
                 //关闭动态分配
-                .setConf("spark.dynamicAllocation.enabled","false")
-                .setConf("spark.driver.extraJavaOptions"," -Dfile.encoding=utf-8")
-                .setConf("spark.executor.extraJavaOptions","-Dfile.encoding=utf-8")
-                .setAppResource("/YunLiKe/jar/taihe/serach/serach-data-1.0-SNAPSHOT-jar-with-dependencies.jar")
-                .setMainClass("com.taihe.serach.SerachJob")
+                .setConf("spark.dynamicAllocation.enabled", "false")
+                .setConf("spark.driver.extraJavaOptions", " -Dfile.encoding=utf-8")
+                .setConf("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8")
+                .setAppResource(APP_RESOURCE)
+                .setMainClass(MAIN_CLASS)
                 //参数
                 .addAppArgs(replaceStr(msg))
                 .setDeployMode("cluster")
@@ -49,6 +65,7 @@ public class SparkStarter {
                     public void stateChanged(SparkAppHandle sparkAppHandle) {
                         log.info("********** submitSqlTask state  changed  **********");
                     }
+
                     @Override
                     public void infoChanged(SparkAppHandle sparkAppHandle) {
                         log.info("********** submitSqlTask info  changed  **********");
@@ -59,10 +76,11 @@ public class SparkStarter {
     /**
      * 解决spark任务提交最后三个}}}只有一个的情况
      * 问题记录： https://blog.csdn.net/u010814849/article/details/78752074
+     *
      * @param arg
      * @return
      */
-    private static String replaceStr(String arg){
-        return arg.replaceAll("}}","} }");
+    private String replaceStr(String arg) {
+        return arg.replaceAll("}}", "} }");
     }
 }

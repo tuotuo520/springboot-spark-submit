@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taihe.springbootsparksubmit.dao.RelationTableDao">
+
+    <resultMap type="com.taihe.springbootsparksubmit.entity.RelationTable" id="RelationTableMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="sourceTableId" column="source_table_id" jdbcType="INTEGER"/>
+        <result property="targetTableId" column="target_table_id" jdbcType="INTEGER"/>
+        <result property="sourceRelatedField" column="source_related_field" jdbcType="VARCHAR"/>
+        <result property="targetRelatedField" column="target_related_field" jdbcType="VARCHAR"/>
+        <result property="tableName" column="table_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 查询有关联关系的表 -->
+    <select id="queryOtherTablesByTableId" resultMap="RelationTableMap">
+            SELECT
+	tt.target_table_id,
+	( SELECT table_name FROM search.analysis_table e WHERE e.id = tt.target_table_id ) AS table_name,
+	tt.source_related_field,
+	tt.target_related_field
+FROM
+	(
+		SELECT-- a.id as id,
+-- a.source_table_id as source_table_id,
+		a.target_table_id AS target_table_id,
+		a.source_related_field AS source_related_field,
+		a.target_related_field AS target_related_field
+	FROM
+        search.`relation_table` a
+	WHERE
+		a.source_table_id = #{tableId} UNION
+		SELECT-- b.id as id,
+-- b.target_table_id as source_table_id,
+		b.source_table_id AS target_table_id,
+		b.target_related_field AS source_related_field,
+		b.source_related_field AS target_related_field
+	FROM
+        search.relation_table b
+	WHERE
+		b.target_table_id = #{tableId} UNION
+	SELECT
+		id AS target_table_id,
+		'' AS source_related_field,
+		'' AS target_related_field
+	FROM
+        search.analysis_table
+	WHERE
+		belongTo = ( SELECT belongTo FROM search.analysis_table c WHERE c.id = 1 )
+		AND id NOT IN (
+		SELECT
+			a.target_table_id AS target_table_id
+		FROM
+        search.`relation_table` a
+		WHERE
+			a.source_table_id = #{tableId} UNION
+		SELECT
+			b.source_table_id AS target_table_id
+		FROM
+        search.relation_table b
+		WHERE
+			b.target_table_id = #{tableId}
+		)
+	AND id != #{tableId}
+	) tt
+
+
+
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RelationTableMap">
+        select
+          id, source_table_id, target_table_id
+        from search.relation_table
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RelationTableMap">
+        select
+          id, source_table_id, target_table_id
+        from search.relation_table
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="RelationTableMap">
+        select
+          id, source_table_id, target_table_id
+        from search.relation_table
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="sourceTableId != null">
+                and source_table_id = #{sourceTableId}
+            </if>
+            <if test="targetTableId != null">
+                and target_table_id = #{targetTableId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into search.relation_table(source_table_id, target_table_id)
+        values (#{sourceTableId}, #{targetTableId})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update search.relation_table
+        <set>
+            <if test="sourceTableId != null">
+                source_table_id = #{sourceTableId},
+            </if>
+            <if test="targetTableId != null">
+                target_table_id = #{targetTableId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from search.relation_table where id = #{id}
+    </delete>
+
+</mapper>

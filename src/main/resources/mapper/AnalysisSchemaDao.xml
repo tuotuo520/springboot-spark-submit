@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taihe.springbootsparksubmit.dao.AnalysisSchemaDao">
+
+    <resultMap type="com.taihe.springbootsparksubmit.entity.AnalysisSchema" id="AnalysisSchemaMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="fieldName" column="field_name" jdbcType="VARCHAR"/>
+        <result property="fileldDescribe" column="fileld_describe" jdbcType="VARCHAR"/>
+        <result property="fieldType" column="field_type" jdbcType="VARCHAR"/>
+        <result property="tableId" column="tableId" jdbcType="VARCHAR"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AnalysisSchemaMap">
+        select
+          id, field_name, fileld_describe, field_type, tableId, remake
+        from search.analysis_schema
+        where id = #{id}
+    </select>
+
+    <select id="querySchemasByTableId" resultMap="AnalysisSchemaMap">
+        select
+        id, field_name, fileld_describe, field_type, tableId, remake
+        from search.analysis_schema
+        where tableId = #{tableId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AnalysisSchemaMap">
+        select
+          id, field_name, fileld_describe, field_type, tableId, remake
+        from search.analysis_schema
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AnalysisSchemaMap">
+        select
+          id, field_name, fileld_describe, field_type, tableId, remake
+        from search.analysis_schema
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="fieldName != null and fieldName != ''">
+                and field_name = #{fieldName}
+            </if>
+            <if test="fileldDescribe != null and fileldDescribe != ''">
+                and fileld_describe = #{fileldDescribe}
+            </if>
+            <if test="fieldType != null and fieldType != ''">
+                and field_type = #{fieldType}
+            </if>
+            <if test="tableId != null and tableId != ''">
+                and tableId = #{tableId}
+            </if>
+            <if test="remake != null and remake != ''">
+                and remake = #{remake}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into search.analysis_schema(field_name, fileld_describe, field_type,tableId, remake)
+        values (#{fieldName}, #{fileldDescribe}, #{fieldType},#{tableId}, #{remake})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update search.analysis_schema
+        <set>
+            <if test="fieldName != null and fieldName != ''">
+                field_name = #{fieldName},
+            </if>
+            <if test="fileldDescribe != null and fileldDescribe != ''">
+                fileld_describe = #{fileldDescribe},
+            </if>
+            <if test="fieldType != null and fieldType != ''">
+                field_type = #{fieldType},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+        </set>
+<!--        where  = #{}-->
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+<!--        delete from search.analysis_schema where  = #{}-->
+    </delete>
+
+</mapper>

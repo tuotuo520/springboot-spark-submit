@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>邮件模版</title>
+</head>
+    <body>
+    您好，您提交的查询任务id为<span th:text="${id}"></span>,名称为<span th:text="${name}"></span>已经执行完毕，执行结果为<span th:text="${result}"></span>,通过以下链接可直接查看结果
+    <a  th:href="${url}">查看结果</a>
+    </body>
+</html>
