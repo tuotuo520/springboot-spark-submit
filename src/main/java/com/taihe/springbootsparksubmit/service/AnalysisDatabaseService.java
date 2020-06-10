@@ -1,6 +1,7 @@
 package com.taihe.springbootsparksubmit.service;
 
 import com.taihe.springbootsparksubmit.entity.AnalysisDatabase;
+import com.taihe.springbootsparksubmit.result.Result;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface AnalysisDatabaseService {
      * @param id 主键
      * @return 实例对象
      */
-    AnalysisDatabase queryById(Integer id);
+    Result<AnalysisDatabase> queryById(AnalysisDatabase id);
 
     /**
      * 查询多条数据
@@ -44,7 +45,7 @@ public interface AnalysisDatabaseService {
      * @param analysisDatabase 实例对象
      * @return 实例对象
      */
-    AnalysisDatabase update(AnalysisDatabase analysisDatabase);
+    Result<AnalysisDatabase> update(AnalysisDatabase analysisDatabase);
 
     /**
      * 通过主键删除数据

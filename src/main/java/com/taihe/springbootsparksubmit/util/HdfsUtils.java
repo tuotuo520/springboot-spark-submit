@@ -8,8 +8,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.zip.ZipEntry;
@@ -24,7 +23,7 @@ import java.util.zip.ZipOutputStream;
 @org.springframework.context.annotation.Configuration
 public class HdfsUtils {
     static FileSystem fs = null;
-    static Configuration conf = null;
+    static Configuration conf;
 
 
     static {
@@ -55,7 +54,7 @@ public class HdfsUtils {
         }
         fs.copyFromLocalFile(uploadFilePath, hdfsFilePath);
         if (uploadFilePath.toString().contains(".txt")) {
-            String newPathStr = hdfsFilePath.toString() + "/" + uploadFilePath.toString().substring(uploadFilePath.toString().lastIndexOf("/"));
+            String newPathStr = hdfsFilePath.toString() + "/" + uploadFilePath.toString().substring(uploadFilePath.toString().lastIndexOf("/")+1);
             Path oldPath = new Path(newPathStr);
             Path newPath = new Path(newPathStr.replace(".txt", ".csv"));
             fs.rename(oldPath, newPath);
@@ -70,58 +69,16 @@ public class HdfsUtils {
      * @param uploadFilePath
      * @param hdfsFilePath
      */
-    public Boolean downloadHdfsFile(Path downloadFilePath, Path hdfsFilePath) throws IOException {
+    public void downloadHdfsFile(Path downloadFilePath, Path hdfsFilePath) throws IOException {
         fs = FileSystem.newInstance(URI.create("hdfs://192.168.0.241:8020/"), conf);
-        fs.copyToLocalFile(hdfsFilePath, downloadFilePath);
-        fs.close();
-        return true;
-    }
-
-
-    /**
-     * 下载hdfs
-     *
-     * @param dirPath
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws URISyntaxException
-     */
-    public ByteArrayOutputStream downloadDirectory(String dirPath) throws IOException, InterruptedException, URISyntaxException {
-
-        Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(new URI("hdfs://192.168.1.100:9000"), conf, "hadoop");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(out);
-        compress(dirPath, zos, fs);
-        zos.close();
-        return out;
-    }
-
-    /**
-     * 压缩目录
-     * @param dirPath
-     * @param zipOutputStream
-     * @param fs
-     * @throws IOException
-     */
-    public void compress(String dirPath, ZipOutputStream zipOutputStream, FileSystem fs) throws IOException {
-        // 要下载的目录dirPath
-        FileStatus[] fileStatulist = fs.listStatus(new Path(dirPath));
-        for (int i = 0; i < fileStatulist.length; i++) {
-            String fileName = fileStatulist[i].getPath().getName();
-            if (fileStatulist[i].isFile()) {
-                Path path = fileStatulist[i].getPath();
-                FSDataInputStream inputStream = fs.open(path);
-                zipOutputStream.putNextEntry(new ZipEntry(fileName));
-                IOUtils.copyBytes(inputStream, zipOutputStream, 1024);
-                inputStream.close();
-            } else {
-                zipOutputStream.putNextEntry(new ZipEntry(fileName + "/"));//因为是目录，所以加上/ 就会自动分层
-                // 这里的substring是因为这个返回的是hdfs://192.168.1.100:9000XXXXX/xxx/xx一大堆，
-                // 而我们要的是/data/img类似这样的目录。
-                compress(fileStatulist[i].getPath().toString().substring(25), zipOutputStream, fs);
-            }
+        FileStatus[] status = fs.listStatus(hdfsFilePath);
+        String path = hdfsFilePath.toString().substring(hdfsFilePath.toString().lastIndexOf("/"));
+        File file = new File(downloadFilePath.toString() + path);
+        if (!file.exists()) {
+            fs.copyToLocalFile(hdfsFilePath, downloadFilePath);
         }
+        fs.close();
     }
+
+
 }

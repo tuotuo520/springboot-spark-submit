@@ -27,7 +27,7 @@ public interface AnalysisSchemaService {
      * @param tableId
      * @return
      */
-    Result<List<AnalysisSchema>> querySchemasByTableId(String tableId);
+    Result<List<AnalysisSchema>> querySchemasByTableId(AnalysisSchema analysisSchema);
 
     /**
      * 查询多条数据
@@ -68,5 +68,6 @@ public interface AnalysisSchemaService {
      * @return 是否成功
      */
     boolean deleteById( );
+
 
 }

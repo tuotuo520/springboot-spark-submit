@@ -28,7 +28,7 @@ public class RelationTableServiceImpl implements RelationTableService {
      * @return
      */
     @Override
-    public Result<List<RelationTable>> queryOtherTablesByTableId(Integer tableId) {
+    public Result<List<RelationTable>> queryOtherTablesByTableId(RelationTable tableId) {
         return Result.ok(this.relationTableDao.queryOtherTablesByTableId(tableId));
     }
 

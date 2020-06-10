@@ -19,7 +19,7 @@ public interface RelationTableService {
      * @param tableId
      * @return
      */
-    Result<List<RelationTable>> queryOtherTablesByTableId(Integer tableId);
+    Result<List<RelationTable>> queryOtherTablesByTableId(RelationTable tableId);
 
     /**
      * 通过ID查询单条数据

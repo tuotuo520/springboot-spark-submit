@@ -1,6 +1,7 @@
 package com.taihe.springbootsparksubmit.controller;
 
 import com.taihe.springbootsparksubmit.entity.AnalysisDatabase;
+import com.taihe.springbootsparksubmit.result.Result;
 import com.taihe.springbootsparksubmit.service.AnalysisDatabaseService;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import javax.annotation.Resource;
  * @author Grayson
  * @since 2020-04-17 17:44:01
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("analysisDatabase")
 public class AnalysisDatabaseController {
@@ -28,7 +30,7 @@ public class AnalysisDatabaseController {
      * @return 单条数据
      */
     @GetMapping("selectOne")
-    public AnalysisDatabase selectOne(Integer id) {
+    public Result<AnalysisDatabase> selectOne(@RequestBody  AnalysisDatabase id) {
         return this.analysisDatabaseService.queryById(id);
     }
 

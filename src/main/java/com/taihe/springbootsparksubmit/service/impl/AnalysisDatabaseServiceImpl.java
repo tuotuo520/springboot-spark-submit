@@ -2,6 +2,7 @@ package com.taihe.springbootsparksubmit.service.impl;
 
 import com.taihe.springbootsparksubmit.entity.AnalysisDatabase;
 import com.taihe.springbootsparksubmit.dao.AnalysisDatabaseDao;
+import com.taihe.springbootsparksubmit.result.Result;
 import com.taihe.springbootsparksubmit.service.AnalysisDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class AnalysisDatabaseServiceImpl implements AnalysisDatabaseService {
      * @return 实例对象
      */
     @Override
-    public AnalysisDatabase queryById(Integer id) {
-        return this.analysisDatabaseDao.queryById(id);
+    public Result<AnalysisDatabase> queryById(AnalysisDatabase id) {
+        return  Result.ok(this.analysisDatabaseDao.queryById(id));
     }
 
     /**
@@ -66,9 +67,9 @@ public class AnalysisDatabaseServiceImpl implements AnalysisDatabaseService {
      * @return 实例对象
      */
     @Override
-    public AnalysisDatabase update(AnalysisDatabase analysisDatabase) {
+    public Result<AnalysisDatabase> update(AnalysisDatabase analysisDatabase) {
         this.analysisDatabaseDao.update(analysisDatabase);
-        return this.queryById(analysisDatabase.getId());
+        return Result.ok(this.analysisDatabaseDao.queryById(analysisDatabase));
     }
 
     /**

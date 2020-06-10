@@ -6,7 +6,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
     driver-class-name: com.mysql.cj.jdbc.Driver        # mysql8驱动  com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.0.246:33306/wxyx?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.0.246:33306/wxyx?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
     username: root
     password: thwl0755
     hikari:
@@ -20,9 +20,9 @@ spring:
       connection-test-query: SELECT 1
   ############################ 邮件服务 #########################
   mail:
-    host: 183.232.125.184 #SMTP服务器地址
+    host: 157.255.245.108 #SMTP服务器地址
     username: tech@taiheiot.com #登陆账号
-    password: vBiRuFAnDZ6JvoYK #登陆密码（或授权码）
+    password: WuXvdNHFc96jnpRU #登陆密码（或授权码）
     default-encoding: UTF-8
     properties:
       from: tech@taiheiot.com #邮件发信人（即真实邮箱）
@@ -39,7 +39,7 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: asd
+      group-id: test
   http:
     encoding:
       charset: UTF-8
@@ -83,17 +83,20 @@ mybatis-plus:
 
 
 #task:
-appName: SerachJob
+appName: taihe_SearchData
 sparkHome: /opt/cloudera/parcels/CDH-6.0.1-1.cdh6.0.1.p0.590678/lib/spark
-appResource: /YunLiKe/jar/taihe/serach/serach-data-1.0-SNAPSHOT-jar-with-dependencies.jar
-mainClass: com.taihe.serach.SerachJob
-
+appResource: /YunLiKe/jar/taihe/search/search_data-1.0-SNAPSHOT-jar-with-dependencies.jar
+mainClass: com.taihe.search.SearchHiveJob
+uploadAppName: taihe_CreateHive
+uploadMainClass: com.taihe.search.SparkOperationHive
 
 #upload
-fileUplodPath: D://新建文件夹//
+#fileUplodPath: D://新建文件夹//
+fileUplodPath: /YunLiKe/jar/taihe/search/uploadfile
 hdfsFilePath: hdfs://192.168.0.241:8020/log/flume_data/
-downloadHdfsPath: hdfs://192.168.0.241:8020/log/flume_data/
-
+downloadHdfsPath: hdfs://192.168.0.241:8020/log/flume_data/result/
+#fileSavePath: D:\mine\springboot-spark-submit\src\main\resources\csvfile\
+fileSavePath: /csvfile/
 topics: searchcompletion
 
 #日志打印

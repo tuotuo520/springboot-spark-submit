@@ -5,10 +5,7 @@ import com.taihe.springbootsparksubmit.result.Result;
 import com.taihe.springbootsparksubmit.service.AnalysisSchemaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,6 +16,7 @@ import java.util.List;
  * @author Grayson
  * @since 2020-04-17 17:44:04
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("analysisSchema")
 @Api(tags = "表字段控制类")
@@ -39,7 +37,7 @@ public class AnalysisSchemaController {
      */
     @ApiOperation("通过表ID查询该表所有的字段")
     @PostMapping("querySchemasByTableId")
-    public Result<List<AnalysisSchema>> querySchemasByTableId(@RequestParam String tableId) {
+    public Result<List<AnalysisSchema>> querySchemasByTableId(@RequestBody AnalysisSchema tableId) {
         return this.analysisSchemaService.querySchemasByTableId(tableId);
     }
 
@@ -52,7 +50,7 @@ public class AnalysisSchemaController {
      */
     @ApiOperation("通过ID更新字段描述")
     @PostMapping("updateSchemasById")
-    public Result<AnalysisSchema> updateSchemasById(@RequestParam AnalysisSchema id) {
+    public Result<AnalysisSchema> updateSchemasById(@RequestBody AnalysisSchema id) {
         return this.analysisSchemaService.updateSchemasById(id);
     }
 }

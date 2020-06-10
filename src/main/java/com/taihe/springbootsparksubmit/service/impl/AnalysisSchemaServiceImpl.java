@@ -28,7 +28,7 @@ public class AnalysisSchemaServiceImpl implements AnalysisSchemaService {
      * @return 实例对象
      */
     @Override
-    public Result<List<AnalysisSchema>> querySchemasByTableId(String tableId) {
+    public Result<List<AnalysisSchema>> querySchemasByTableId(AnalysisSchema tableId) {
         return Result.ok(this.analysisSchemaDao.querySchemasByTableId(tableId));
     }
 

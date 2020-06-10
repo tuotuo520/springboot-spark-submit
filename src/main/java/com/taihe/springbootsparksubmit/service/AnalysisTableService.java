@@ -66,7 +66,7 @@ public interface AnalysisTableService {
      * @param belongTo
      * @return
      */
-    Result<List<AnalysisTable>> queryTablesByBelongTo(String belongTo);
+    Result<List<AnalysisTable>> queryTablesByBelongTo(AnalysisTable belongTo);
 
 
     /**
@@ -75,6 +75,6 @@ public interface AnalysisTableService {
      * @param analysisTable 实例对象
      * @return 实例对象
      */
-    Result<AnalysisTable> updateTableDescById(Integer tableId,String tableDesc);
+    Result<AnalysisTable> updateTableDescById(AnalysisTable analysisTable);
 
 }

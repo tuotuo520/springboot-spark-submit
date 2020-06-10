@@ -14,53 +14,27 @@
         <result property="executeStatus" column="execute_statue" jdbcType="VARCHAR"/>
         <result property="executeDescribe" column="execute_describe" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="taskName" column="task_name" jdbcType="TIMESTAMP"/>
+        <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
+        <result property="belongTo" column="belongTo" jdbcType="VARCHAR"/>
+        <result property="restoreData" column="restore_data" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ExcuteRecordMap">
         select
-          id, condition_content, create_time, is_complete, result_table, result_type, remark
+          id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
         from search.excute_record
         where id = #{id}
     </select>
 
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="ExcuteRecordMap">
-        select
-          id, condition_content, create_time, is_complete, result_table, result_type, remark
-        from search.excute_record
-        limit #{offset}, #{limit}
-    </select>
+
 
     <!--查询指定行数据-->
     <select id="queryAlLRecord" resultMap="ExcuteRecordMap">
         select
-        id, condition_content, create_time, is_complete, result_table, result_type, remark
+        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
         from search.excute_record
-        <where>
-            <if test="id != null">
-                and id = #{id}
-            </if>
-            <if test="conditionContent != null and conditionContent != ''">
-                and condition_content = #{conditionContent}
-            </if>
-            <if test="createTime != null">
-                and create_time = #{createTime}
-            </if>
-            <if test="isComplete != null">
-                and is_complete = #{isComplete}
-            </if>
-            <if test="resultTable != null and resultTable != ''">
-                and result_table = #{resultTable}
-            </if>
-            <if test="resultType != null">
-                and result_type = #{resultType}
-            </if>
-            <if test="remark != null and remark != ''">
-                and remark = #{remark}
-            </if>
-        </where>
         order by create_time desc
     </select>
 
@@ -69,10 +43,14 @@
         select * from search.searchresult_#{id}
     </select>
 
+    <select id="querySchemaByTable" resultType="java.lang.String">
+       select COLUMN_NAME from information_schema.COLUMNS where table_name = #{tableName}
+    </select>
+
     <!--通过实体作为筛选条件查询-->
-    <select id="queryAll" resultMap="ExcuteRecordMap">
+    <select id="queryByBelongTo" resultMap="ExcuteRecordMap">
         select
-          id, condition_content, create_time, is_complete, result_table, result_type, remark
+        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
         from search.excute_record
         <where>
             <if test="id != null">
@@ -96,13 +74,35 @@
             <if test="remark != null and remark != ''">
                 and remark = #{remark}
             </if>
+            <if test="mailAddress != null and mailAddress != ''">
+                and mail_address = #{mailAddress}
+            </if>
+            <if test="executeStatus != null and executeStatus != ''">
+                and execute_statue = #{executeStatus}
+            </if>
+            <if test="resultType != null and executeDescribe != ''">
+                and  execute_describe = #{executeDescribe}
+            </if>
+            <if test="updateTime != null">
+                and  update_time = #{updateTime}
+            </if>
+            <if test="taskName != null and taskName != ''">
+                and task_name = #{taskName}
+            </if>
+            <if test="restoreData != null and taskName != ''">
+                and  restore_data = #{restoreData}
+            </if>
+            <if test="filePath != null and filePath != ''">
+                and  file_path = #{filePath}
+            </if>
         </where>
+        order by create_time desc
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into search.excute_record(condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name)
-        values (#{conditionContent}, #{createTime}, #{isComplete}, #{resultTable}, #{resultType}, #{remark}, #{mailAddress}, #{executeStatus}, #{executeDescribe}, #{updateTime}, #{taskName})
+        insert into search.excute_record(condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,belongTo,restore_data,file_path)
+        values (#{conditionContent}, #{createTime}, #{isComplete}, #{resultTable}, #{resultType}, #{remark}, #{mailAddress}, #{executeStatus}, #{executeDescribe}, #{updateTime}, #{taskName}, #{belongTo}, #{restoreData}, #{filePath})
     </insert>
 
     <!--通过主键修改数据-->
@@ -127,20 +127,26 @@
             <if test="remark != null and remark != ''">
                 remark = #{remark},
             </if>
-            <if test="mailAddress != null">
+            <if test="mailAddress != null and mailAddress != ''">
                 mail_address = #{mailAddress},
             </if>
             <if test="executeStatus != null and executeStatus != ''">
                 execute_statue = #{executeStatus},
             </if>
-            <if test="resultType != null">
+            <if test="resultType != null and executeDescribe != ''">
                 execute_describe = #{executeDescribe},
             </if>
-            <if test="updateTime != null and updateTime != ''">
+            <if test="updateTime != null">
                 update_time = #{updateTime},
             </if>
             <if test="taskName != null and taskName != ''">
                 task_name = #{taskName},
+            </if>
+            <if test="restoreData != null and taskName != ''">
+                restore_data = #{restoreData},
+            </if>
+            <if test="filePath != null and filePath != ''">
+                file_path = #{filePath},
             </if>
         </set>
         where id = #{id}
@@ -150,5 +156,9 @@
     <delete id="deleteById">
         delete from search.excute_record where id = #{id}
     </delete>
+    <select id="queryAllBelongTo" resultType="java.lang.String">
+        select distinct(belongTo) from search.excute_record
+
+    </select>
 
 </mapper>

@@ -69,5 +69,5 @@ public interface AnalysisSchemaDao {
      * @param tableId
      * @return
      */
-    List<AnalysisSchema> querySchemasByTableId(String tableId);
+    List<AnalysisSchema> querySchemasByTableId(AnalysisSchema tableId);
 }

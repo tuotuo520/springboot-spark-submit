@@ -18,6 +18,7 @@ import java.util.List;
  * @author Grayson
  * @since 2020-04-17 17:44:05
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("analysisTable")
 @Api(tags = "表控制类")
@@ -56,7 +57,7 @@ public class AnalysisTableController {
      */
     @PostMapping("queryTablesByBelongTo")
     @ApiOperation("根据所属库查询下面有多少表")
-    public Result<List<AnalysisTable>> queryTablesByBelongTo(@Valid  @RequestParam String belongTo){
+    public Result<List<AnalysisTable>> queryTablesByBelongTo(@Valid  @RequestBody AnalysisTable belongTo){
         return this.analysisTableService.queryTablesByBelongTo(belongTo);
     }
 
@@ -67,8 +68,8 @@ public class AnalysisTableController {
      */
     @PostMapping("updateTableDescById")
     @ApiOperation("根据id更新表描述")
-    public Result<AnalysisTable> updateTableDescById(@Valid  @RequestParam Integer tableId,@RequestParam String tableDesc){
-        return this.analysisTableService.updateTableDescById(tableId,tableDesc);
+    public Result<AnalysisTable> updateTableDescById(@Valid  @RequestBody() AnalysisTable analysisTable){
+        return this.analysisTableService.updateTableDescById(analysisTable);
     }
 
 }

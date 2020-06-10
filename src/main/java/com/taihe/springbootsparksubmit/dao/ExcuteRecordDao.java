@@ -23,25 +23,19 @@ public interface ExcuteRecordDao {
      */
     ExcuteRecord queryById(Integer id);
 
+
     /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
+     * 查询所有
+     * @return
      */
-    List<ExcuteRecord> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
-
-
-
-    List<ExcuteRecord> queryAlLRecord(ExcuteRecord excuteRecord);
+    List<ExcuteRecord> queryAlLRecord();
     /**
      * 通过实体作为筛选条件查询
      *
      * @param excuteRecord 实例对象
      * @return 对象列表
      */
-    List<ExcuteRecord> queryAll(ExcuteRecord excuteRecord);
+    List<ExcuteRecord> queryByBelongTo(ExcuteRecord excuteRecord);
 
     /**
      * 新增数据
@@ -71,7 +65,19 @@ public interface ExcuteRecordDao {
      * 通过表名查询数据
      * @return
      */
-    List<Object> queryByTableId(@Param("id") Integer id);
+    List<Object> queryByTableId(ExcuteRecord id);
 
+    /**
+     * 查询
+     * @param tableName
+     * @return
+     */
+    List<String> querySchemaByTable(@Param("tableName") String tableName);
+
+    /**
+     * 查询所有的belongto
+     * @return
+     */
+    List<String> queryAllBelongTo();
 
 }

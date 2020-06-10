@@ -1,12 +1,10 @@
 package com.taihe.springbootsparksubmit.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.taihe.springbootsparksubmit.entity.ExcuteRecord;
-import com.taihe.springbootsparksubmit.result.PageRequest;
 import com.taihe.springbootsparksubmit.result.Result;
-import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,14 +23,8 @@ public interface ExcuteRecordService {
      */
     ExcuteRecord queryById(Integer id);
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<ExcuteRecord> queryAllByLimit(int offset, int limit);
+
+
 
     /**
      * 新增数据
@@ -58,11 +50,6 @@ public interface ExcuteRecordService {
      */
     boolean deleteById(Integer id);
 
-    /**
-     * 查询所有的执行记录
-     * @return
-     */
-    Result<PageInfo<ExcuteRecord>> queryAlLRecord(ExcuteRecord excuteRecord);
 
     /**
      * 保存执行记录
@@ -84,6 +71,20 @@ public interface ExcuteRecordService {
      * @param id
      * @return
      */
-    List<Object> queryByTableId(Integer id);
+    Result<JSONObject> queryByTableId(ExcuteRecord id);
+
+
+    /**
+     * 查询结果记录中有多少belongTo
+     * @return
+     */
+    Result<List<String>> queryAllBelongTo();
+
+
+    /**
+     * 根据belongTo查询记录
+     * @return
+     */
+    Result<PageInfo<ExcuteRecord>> queryByBelongTo(ExcuteRecord excuteRecord);
 
 }

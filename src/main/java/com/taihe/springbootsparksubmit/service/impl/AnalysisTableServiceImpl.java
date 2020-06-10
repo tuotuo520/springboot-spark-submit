@@ -100,10 +100,8 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
      * @return
      */
     @Override
-    public Result<List<AnalysisTable>> queryTablesByBelongTo(String belongTo) {
-        AnalysisTable dto = new AnalysisTable();
-        dto.setBelongTo(belongTo);
-        return Result.ok(this.analysisTableDao.queryAll(dto));
+    public Result<List<AnalysisTable>> queryTablesByBelongTo(AnalysisTable belongTo) {
+        return Result.ok(this.analysisTableDao.queryAll(belongTo));
     }
 
     /**
@@ -112,14 +110,8 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
      * @param tableId@return 实例对象
      */
     @Override
-    public Result<AnalysisTable> updateTableDescById(Integer tableId,String tableDesc) {
-        AnalysisTable dto = new AnalysisTable();
-
-
-
-        dto.setId(tableId);
-        dto.setTableDescribe(tableDesc);
-        this.analysisTableDao.update(dto);
-        return Result.ok(this.queryById(dto.getId()));
+    public Result<AnalysisTable> updateTableDescById(AnalysisTable analysisTable) {
+        this.analysisTableDao.update(analysisTable);
+        return Result.ok(this.queryById(analysisTable.getId()));
     }
 }

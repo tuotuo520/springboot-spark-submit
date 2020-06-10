@@ -79,6 +79,39 @@ public class ExcuteRecord extends PageRequest implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    @ApiModelProperty(value = "文件路径")
+    private String filePath;
+
+    public String getBelongTo() {
+        return belongTo;
+    }
+
+    public void setBelongTo(String belongTo) {
+        this.belongTo = belongTo;
+    }
+
+    @ApiModelProperty(value = "所属库")
+    private String belongTo;
+
+    public String getRestoreData() {
+        return restoreData;
+    }
+
+    public void setRestoreData(String restoreData) {
+        this.restoreData = restoreData;
+    }
+
+    @ApiModelProperty(value = "恢复数据用")
+    private String restoreData;
+
     public String getExecuteStatus() {
         return executeStatus;
     }

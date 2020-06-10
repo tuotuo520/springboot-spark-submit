@@ -96,6 +96,7 @@ public class MailServiceImpl implements MailService {
         helper.setSubject(mail.getSubject());
         helper.setText(emailContent, true);
         mailSender.send(mimeMessage);
+        //保存到數據庫
         saveMail(mail);
     }
 

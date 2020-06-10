@@ -27,6 +27,28 @@ public class RelationTable implements Serializable {
     @ApiModelProperty(value = "目标表表名")
     private String tableName;
 
+    public String getTargetDatabaseId() {
+        return targetDatabaseId;
+    }
+
+    public void setTargetDatabaseId(String targetDatabaseId) {
+        this.targetDatabaseId = targetDatabaseId;
+    }
+
+    @ApiModelProperty(value = "目标表库名")
+    private String targetDatabaseId;
+
+    public String getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(String tableId) {
+        this.tableId = tableId;
+    }
+
+    @ApiModelProperty(value = "参数表id")
+    private String tableId;
+
     public String getSourceRelatedField() {
         return sourceRelatedField;
     }

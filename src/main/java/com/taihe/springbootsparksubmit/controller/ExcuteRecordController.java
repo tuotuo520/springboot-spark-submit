@@ -1,7 +1,10 @@
 package com.taihe.springbootsparksubmit.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.taihe.springbootsparksubmit.entity.ExcuteRecord;
+import com.taihe.springbootsparksubmit.result.Page;
+import com.taihe.springbootsparksubmit.result.PageResult;
 import com.taihe.springbootsparksubmit.result.Result;
 import com.taihe.springbootsparksubmit.service.ExcuteRecordService;
 import io.swagger.annotations.Api;
@@ -18,6 +21,7 @@ import java.util.List;
  * @author Grayson
  * @since 2020-04-17 17:44:07
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("executeRecord")
 @Api(tags = "执行历史记录控制类")
@@ -29,16 +33,7 @@ public class ExcuteRecordController {
     private ExcuteRecordService excuteRecordService;
 
 
-    /**
-     * 查询所有的执行记录
-     * @param excuteRecord
-     * @return
-     */
-    @ApiOperation("查询所有的执行记录")
-    @PostMapping("queryAlLRecord")
-    public Result<PageInfo<ExcuteRecord>> queryAlLRecord(@RequestBody ExcuteRecord excuteRecord){
-        return this.excuteRecordService.queryAlLRecord(excuteRecord);
-    }
+
 
     /**
      * 保存执行记录
@@ -69,8 +64,31 @@ public class ExcuteRecordController {
      */
     @ApiOperation("根据表名查询执行结果")
     @PostMapping("queryByTableId")
-    public List<Object> queryByTableId(@RequestParam Integer id){
+    public Result<JSONObject> queryByTableId(@RequestBody ExcuteRecord id){
         return this.excuteRecordService.queryByTableId(id);
     }
 
+
+    /**
+     * 根据表名查询执行结果
+     * @param id
+     * @return
+     */
+    @ApiOperation("查询所包含的所有所属库")
+    @PostMapping("queryAllBelongTo")
+    public Result<List<String>> queryAllBelongTo(){
+        return this.excuteRecordService.queryAllBelongTo();
+    }
+
+
+    /**
+     * 根据表名查询执行结果
+     * @param id
+     * @return
+     */
+    @ApiOperation("根据belongTo查询执行记录")
+    @PostMapping("queryByBelongTo")
+    public Result<PageInfo<ExcuteRecord>> queryByBelongTo(@RequestBody ExcuteRecord id){
+        return this.excuteRecordService.queryByBelongTo(id);
+    }
 }

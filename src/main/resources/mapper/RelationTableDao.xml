@@ -9,12 +9,21 @@
         <result property="sourceRelatedField" column="source_related_field" jdbcType="VARCHAR"/>
         <result property="targetRelatedField" column="target_related_field" jdbcType="VARCHAR"/>
         <result property="tableName" column="table_name" jdbcType="VARCHAR"/>
+        <result property="targetDatabaseId" column="target_database_id" jdbcType="VARCHAR"/>
     </resultMap>
 
 
     <!-- 查询有关联关系的表 -->
     <select id="queryOtherTablesByTableId" resultMap="RelationTableMap">
             SELECT
+        (
+        SELECT
+        databaseId
+        FROM
+        search.analysis_table e
+        WHERE
+        e.id = tt.target_table_id
+        ) AS target_database_id,
 	tt.target_table_id,
 	( SELECT table_name FROM search.analysis_table e WHERE e.id = tt.target_table_id ) AS table_name,
 	tt.source_related_field,
@@ -46,7 +55,7 @@ FROM
 	FROM
         search.analysis_table
 	WHERE
-		belongTo = ( SELECT belongTo FROM search.analysis_table c WHERE c.id = 1 )
+		belongTo = ( SELECT belongTo FROM search.analysis_table c WHERE c.id = #{tableId} )
 		AND id NOT IN (
 		SELECT
 			a.target_table_id AS target_table_id

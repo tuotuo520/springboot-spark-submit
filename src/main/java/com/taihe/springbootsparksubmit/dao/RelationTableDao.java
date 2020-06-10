@@ -17,7 +17,7 @@ public interface RelationTableDao {
 
 
 
-    List<RelationTable> queryOtherTablesByTableId(@Param("tableId") Integer tableId);
+    List<RelationTable> queryOtherTablesByTableId(RelationTable tableId);
 
     /**
      * 通过ID查询单条数据

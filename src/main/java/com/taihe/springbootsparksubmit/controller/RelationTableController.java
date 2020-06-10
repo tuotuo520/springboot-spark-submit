@@ -17,6 +17,7 @@ import java.util.List;
  * @author Grayson
  * @since 2020-04-17 17:44:08
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("relationTable")
 @Api(tags = "关系表控制层")
@@ -35,7 +36,7 @@ public class RelationTableController {
      */
     @ApiOperation("查询有关联关系或者无关联关系表")
     @PostMapping("queryOtherTablesByTableId")
-    public Result<List<RelationTable>> queryOtherTablesByTableId(@RequestParam Integer tableId) {
+    public Result<List<RelationTable>> queryOtherTablesByTableId(@RequestBody RelationTable tableId) {
         return this.relationTableService.queryOtherTablesByTableId(tableId);
     }
 
