@@ -95,8 +95,7 @@ uploadMainClass: com.taihe.search.SparkOperationHive
 fileUplodPath: /YunLiKe/jar/taihe/search/uploadfile
 hdfsFilePath: hdfs://192.168.0.241:8020/log/flume_data/
 downloadHdfsPath: hdfs://192.168.0.241:8020/log/flume_data/result/
-#fileSavePath: D:\mine\springboot-spark-submit\src\main\resources\csvfile\
-fileSavePath: /csvfile/
+hdfsuri: hdfs://192.168.0.241:8020/
 topics: searchcompletion
 
 #日志打印

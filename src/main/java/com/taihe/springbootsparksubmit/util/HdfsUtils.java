@@ -7,6 +7,7 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.net.URI;
@@ -22,6 +23,9 @@ import java.util.zip.ZipOutputStream;
 @CommonsLog
 @org.springframework.context.annotation.Configuration
 public class HdfsUtils {
+    @Value("${hdfsuri}")
+    private String HDFS_URI;
+
     static FileSystem fs = null;
     static Configuration conf;
 
@@ -47,7 +51,7 @@ public class HdfsUtils {
      * @param hdfsFilePath
      */
     public void uploadFileToHdfs(Path uploadFilePath, Path hdfsFilePath) throws IOException {
-        fs = FileSystem.newInstance(URI.create("hdfs://192.168.0.241:8020/"), conf);
+        fs = this.getFs();
         if (!fs.exists(hdfsFilePath)) {
             log.info("---------------创建新文件夹：" + hdfsFilePath);
             fs.mkdirs(hdfsFilePath);
@@ -70,7 +74,7 @@ public class HdfsUtils {
      * @param hdfsFilePath
      */
     public void downloadHdfsFile(Path downloadFilePath, Path hdfsFilePath) throws IOException {
-        fs = FileSystem.newInstance(URI.create("hdfs://192.168.0.241:8020/"), conf);
+        fs = this.getFs();
         FileStatus[] status = fs.listStatus(hdfsFilePath);
         String path = hdfsFilePath.toString().substring(hdfsFilePath.toString().lastIndexOf("/"));
         File file = new File(downloadFilePath.toString() + path);
@@ -80,5 +84,7 @@ public class HdfsUtils {
         fs.close();
     }
 
-
+    public FileSystem getFs() throws IOException {
+            return  FileSystem.newInstance(URI.create(HDFS_URI), conf);
+    }
 }

@@ -11,8 +11,9 @@ import com.taihe.springbootsparksubmit.service.AnalysisSchemaService;
 import com.taihe.springbootsparksubmit.service.AnalysisTableService;
 import com.taihe.springbootsparksubmit.starter.SparkStarter;
 import lombok.extern.apachecommons.CommonsLog;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -34,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @Author : Grayson
@@ -53,8 +56,6 @@ public class UploadUtils {
     private String HDFS_FILE_PATH;
     @Value("${downloadHdfsPath}")
     private String DOWNLOAD_HDFS_PATH;
-    @Value("${fileSavePath}")
-    private String FILE_SAVE_PATH;
 
     @Autowired
     private AnalysisDatabaseService analysisDatabaseService;
@@ -66,6 +67,8 @@ public class UploadUtils {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private SparkStarter sparkStarter;
+    @Resource
+    private HdfsUtils hdfsUtils;
 
 
     public static UploadUtils uploadUtils;
@@ -76,6 +79,7 @@ public class UploadUtils {
         uploadUtils.analysisDatabaseService = this.analysisDatabaseService;
         uploadUtils.analysisTableService = this.analysisTableService;
         uploadUtils.analysisSchemaService = this.analysisSchemaService;
+        uploadUtils.hdfsUtils = this.hdfsUtils;
     }
 
     /**
@@ -139,8 +143,8 @@ public class UploadUtils {
         String tableName = fileType.contains(".txt") ? fileType.replace(".txt", "csv") + nowDate : fileType.replace(".", "") + nowDate;
         //发送到HDFS
         Path fileUploadPath = new Path(uploadFile.getPath());
-        String newDatabaseName = DATABASE_NAME+"_"+ fileType.replace(".","");
-        String path = HDFS_FILE_PATH + "/" + newDatabaseName + "/" + tableName +"/"+ fromLongToDate("yyyy-MM-dd", nowDate);
+        String newDatabaseName = DATABASE_NAME + "_" + fileType.replace(".", "");
+        String path = HDFS_FILE_PATH + "/" + newDatabaseName + "/" + tableName + "/" + fromLongToDate("yyyy-MM-dd", nowDate);
         Path hdfsFilePath = new Path(path);
         new HdfsUtils().uploadFileToHdfs(fileUploadPath, hdfsFilePath);
         in.close();
@@ -169,7 +173,7 @@ public class UploadUtils {
             analysisSchema.setTableId(analysisTable.getId().toString());
             this.analysisSchemaService.insert(analysisSchema);
         }
-        log.info("######################  "+ analysisTable.getId());
+        log.info("######################  " + analysisTable.getId());
         //传入刚拼接的表ID
         sparkStarter.uploadTask(analysisTable.getId());
         return Result.ok();
@@ -212,61 +216,37 @@ public class UploadUtils {
      * @throws Exception
      */
     public Object downloadFile(HttpServletResponse response, ExcuteRecord excuteRecord) throws Exception {
+        FileSystem fs = this.hdfsUtils.getFs();
         //hdfs目标路径
-        Path sourcePath = new Path(DOWNLOAD_HDFS_PATH + "searchresult_" + excuteRecord.getId()+"/");
-        String fileSavePath = FILE_SAVE_PATH;
-        File downloadFile = new File(fileSavePath);
-        if (!downloadFile.exists()) {
-            downloadFile.mkdirs();//创建目录
-        }
-        Path savePath = new Path(fileSavePath);
-        //文件先下载到本地
-        new HdfsUtils().downloadHdfsFile(savePath, sourcePath);
-        String fileName = "searchresult_"+ excuteRecord.getId()+"/";
-        File[] dirFile = new File(fileSavePath+fileName).listFiles();
-        String finalPath = null;
-        for(File file : dirFile){
-            if(file.isFile()){
-                if(file.getName().endsWith(".csv")){
-                    finalPath = file.getAbsolutePath();
-                }
-            }else{
-                return Result.error("下载附件失败，请检查文件“" + fileName + "”是否存在");
-            }
-        }
-        OutputStream os = null;
-        InputStream is = null;
+        Path sourcePath = new Path(DOWNLOAD_HDFS_PATH + "searchresult_" + excuteRecord.getId() + "/");
+        String fileName = "searchresult_" + excuteRecord.getId() + "/";
+        FileStatus[] filelist = fs.listStatus(new Path(sourcePath.toString()));
+        OutputStream os = response.getOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
         try {
-            // 取得输出流
-            os = response.getOutputStream();
-            // 清空输出流
-            response.reset();
             response.setContentType("application/x-download;charset=GBK");
-            String temName = fileName+".csv";
+            String temName = fileName.replace("/","") + ".zip";
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(temName.getBytes("utf-8"), "iso-8859-1"));
-            //读取流
-            assert finalPath != null;
-            File f = new File(finalPath);
-            is = new FileInputStream(f);
-            if (is == null) {
-                log.error("下载附件失败，请检查文件“" + fileName + "”是否存在");
-                return Result.error("下载附件失败，请检查文件“" + fileName + "”是否存在");
+            for (int i = 0; i < filelist.length; i++) {
+                InputStream in = fs.open(filelist[i].getPath());
+                String name = filelist[i].getPath().toString().substring(filelist[i].getPath().toString().lastIndexOf("/") + 1);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                //创建zip实体（一个文件对应一个ZipEntry）
+                ZipEntry entry = new ZipEntry(name);
+                zos.putNextEntry(entry);
+                //文件流循环写入ZipOutputStream
+                while ((len = in.read(buffer)) != -1) {
+                    zos.write(buffer, 0, len);
+                }
+                in.close();
+                zos.closeEntry();
             }
-            //复制
-            IOUtils.copy(is, response.getOutputStream());
-            response.getOutputStream().flush();
+            zos.close();
         } catch (IOException e) {
             return Result.error("下载附件失败,error:" + e.getMessage());
         }
-        //文件的关闭放在finally中
         finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                log.error(ExceptionUtils.getFullStackTrace(e));
-            }
             try {
                 if (os != null) {
                     os.close();
@@ -274,25 +254,16 @@ public class UploadUtils {
             } catch (IOException e) {
                 log.error(ExceptionUtils.getFullStackTrace(e));
             }
+            try {
+                if (zos != null) {
+                    zos.close();
+                }
+            } catch (IOException e) {
+                log.error(ExceptionUtils.getFullStackTrace(e));
+            }
         }
         return null;
     }
-
-
-    /**
-     * 获取文件夹下文件
-     *
-     * @param path
-     * @return
-     */
-    public String getFileName(String path) {
-        File root = new File(path);
-        File[] list = root.listFiles();
-
-        if (list == null) return null;
-        return list[0].getName();
-    }
-
 
     /**
      * Long类型时间->转换成日期->转成要求格式的String类型
@@ -302,5 +273,6 @@ public class UploadUtils {
         Date date = new Date(time);
         return sdf.format(date);
     }
+
 
 }
