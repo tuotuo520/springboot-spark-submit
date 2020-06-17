@@ -157,7 +157,6 @@ public class ExcuteRecordServiceImpl implements ExcuteRecordService {
 
         if (schemaList.size() > 0) {
             JSONArray resultArray = JSONArray.parseArray(JSON.toJSONString(this.excuteRecordDao.queryByTableId(id)));
-
             JSONArray ja = new JSONArray();
             if (resultArray.size() > 0) {
                 for (int i = 0; i < resultArray.size(); i++) {

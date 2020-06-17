@@ -1,6 +1,8 @@
 package com.taihe.springbootsparksubmit.util;
 
+import com.clearspring.analytics.util.Lists;
 import com.taihe.springbootsparksubmit.constant.RedisKeyConstants;
+import com.taihe.springbootsparksubmit.dao.ExcuteRecordDao;
 import com.taihe.springbootsparksubmit.entity.AnalysisDatabase;
 import com.taihe.springbootsparksubmit.entity.AnalysisSchema;
 import com.taihe.springbootsparksubmit.entity.AnalysisTable;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -63,6 +66,8 @@ public class UploadUtils {
     private AnalysisTableService analysisTableService;
     @Autowired
     private AnalysisSchemaService analysisSchemaService;
+    @Autowired
+    private ExcuteRecordDao excuteRecordDao;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -80,6 +85,7 @@ public class UploadUtils {
         uploadUtils.analysisTableService = this.analysisTableService;
         uploadUtils.analysisSchemaService = this.analysisSchemaService;
         uploadUtils.hdfsUtils = this.hdfsUtils;
+        uploadUtils.excuteRecordDao = this.excuteRecordDao;
     }
 
     /**
@@ -216,22 +222,34 @@ public class UploadUtils {
      * @throws Exception
      */
     public Object downloadFile(HttpServletResponse response, ExcuteRecord excuteRecord) throws Exception {
+        excuteRecord = this.excuteRecordDao.queryById(excuteRecord.getId());
         FileSystem fs = this.hdfsUtils.getFs();
         //hdfs目标路径
         Path sourcePath = new Path(DOWNLOAD_HDFS_PATH + "searchresult_" + excuteRecord.getId() + "/");
-        String fileName = "searchresult_" + excuteRecord.getId() + "/";
-        FileStatus[] filelist = fs.listStatus(new Path(sourcePath.toString()));
+        String fileName = "searchresult_" + excuteRecord.getId();
+        FileStatus[] filelist = fs.listStatus(sourcePath);
+        List<Path> pathList = Lists.newArrayList();
+        List<Path> renamePathList = Lists.newArrayList();
+        for (int i = 0; i < filelist.length; i++) {
+            if(filelist[i].getLen()>0){
+                pathList.add(filelist[i].getPath());
+            }
+        }
         OutputStream os = response.getOutputStream();
         ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
         try {
             response.setContentType("application/x-download;charset=GBK");
-            String temName = fileName.replace("/","") + ".zip";
+            String temName = fileName + ".zip";
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(temName.getBytes("utf-8"), "iso-8859-1"));
-            for (int i = 0; i < filelist.length; i++) {
-                InputStream in = fs.open(filelist[i].getPath());
-                String name = filelist[i].getPath().toString().substring(filelist[i].getPath().toString().lastIndexOf("/") + 1);
+//            for (int i = 0; i < pathList.size(); i++) {
+//                String rename = pathList.get(i).toString().replace(pathList.get(i).toString().substring(pathList.get(i).toString().lastIndexOf("/")+1,pathList.get(i).toString().lastIndexOf(".csv")),excuteRecord.getExecuteDescribe()+"_"+i);
+//                renamePathList.add(new Path(this.rename(pathList.get(i).toString(),rename,fs)));
+//            }
+            for (int i = 0; i < pathList.size(); i++) {
+                InputStream in = fs.open(pathList.get(i));
+                String name = pathList.get(i).toString().substring(pathList.get(i).toString().lastIndexOf("/") + 1);
                 byte[] buffer = new byte[1024];
-                int len = 0;
+                int len;
                 //创建zip实体（一个文件对应一个ZipEntry）
                 ZipEntry entry = new ZipEntry(name);
                 zos.putNextEntry(entry);
@@ -252,14 +270,14 @@ public class UploadUtils {
                     os.close();
                 }
             } catch (IOException e) {
-                log.error(ExceptionUtils.getFullStackTrace(e));
+                log.error("OutputStream close error");
             }
             try {
                 if (zos != null) {
                     zos.close();
                 }
             } catch (IOException e) {
-                log.error(ExceptionUtils.getFullStackTrace(e));
+                log.error("ZipOutputStream close error");
             }
         }
         return null;
@@ -272,6 +290,22 @@ public class UploadUtils {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         Date date = new Date(time);
         return sdf.format(date);
+    }
+
+    /**
+     * 重命名
+     * @param fromFile
+     * @param toFile
+     * @throws IOException
+     */
+    @Deprecated
+    public String rename(String fromFile, String toFile,FileSystem fs) {
+        try {
+            fs.rename(new Path(fromFile), new Path(toFile));
+        } catch (IOException e) {
+            log.error("Rename io exception");
+        }
+        return toFile;
     }
 
 
