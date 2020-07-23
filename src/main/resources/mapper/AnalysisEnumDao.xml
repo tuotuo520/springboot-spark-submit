@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taihe.springbootsparksubmit.dao.AnalysisEnumDao">
+
+    <resultMap type="com.taihe.springbootsparksubmit.entity.AnalysisEnum" id="AnalysisEnumMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="fieldId" column="field_id" jdbcType="INTEGER"/>
+        <result property="fieldName" column="field_name" jdbcType="VARCHAR"/>
+        <result property="tableId" column="table_id" jdbcType="INTEGER"/>
+        <result property="tableName" column="table_name" jdbcType="VARCHAR"/>
+        <result property="databaseId" column="database_id" jdbcType="INTEGER"/>
+        <result property="databaseName" column="database_name" jdbcType="VARCHAR"/>
+        <result property="enumCode" column="enum_code" jdbcType="VARCHAR"/>
+        <result property="enumName" column="enum_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryBySchemaId" resultMap="AnalysisEnumMap">
+        select
+          id, field_id, field_name, table_id, table_name, database_id, database_name, enum_code, enum_name
+        from search.analysis_enum
+        where field_id = #{fieldId}
+    </select>
+
+
+
+</mapper>
