@@ -17,15 +17,26 @@
         <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
         <result property="belongTo" column="belongTo" jdbcType="VARCHAR"/>
         <result property="restoreData" column="restore_data" jdbcType="VARCHAR"/>
-        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="secondaryTableName" column="secondary_table_name" jdbcType="VARCHAR"/>
+        <result property="secondaryTableId" column="secondary_table_id" jdbcType="INTEGER"/>
+        <result property="secondaryTag" column="secondary_tag" jdbcType="INTEGER"/>
+        <result property="execute" column="execute" jdbcType="INTEGER"/>
+        <result property="firstId" column="first_id" jdbcType="INTEGER"/>
+        <result property="secondaryDatabaseId" column="secondary_database_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ExcuteRecordMap">
         select
-          id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
+          id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,secondary_table_name,secondary_table_id,secondary_tag,execute,first_id,secondary_database_id,belongTo
         from search.excute_record
-        where id = #{id}
+        where  id = #{id} and secondary_tag = #{secondaryTag}
+    </select>
+    <select id="queryByIdWithNoTag" resultMap="ExcuteRecordMap">
+        select
+        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,secondary_table_name,secondary_table_id,secondary_tag,execute,first_id,secondary_database_id,belongTo
+        from search.excute_record
+        where  id = #{id}
     </select>
 
 
@@ -33,8 +44,9 @@
     <!--查询指定行数据-->
     <select id="queryAlLRecord" resultMap="ExcuteRecordMap">
         select
-        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
+        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,secondary_table_name,secondary_table_id,secondary_tag,execute,first_id,secondary_database_id,belongTo
         from search.excute_record
+        where secondary_tag = #{secondaryTag}
         order by create_time desc
     </select>
 
@@ -50,9 +62,10 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryByBelongTo" resultMap="ExcuteRecordMap">
         select
-        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,file_path
+        id, condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,restore_data,secondary_table_name,secondary_table_id,secondary_tag,execute,first_id,secondary_database_id,belongTo
         from search.excute_record
         <where>
+
             <if test="id != null">
                 and id = #{id}
             </if>
@@ -89,11 +102,29 @@
             <if test="taskName != null and taskName != ''">
                 and task_name = #{taskName}
             </if>
-            <if test="restoreData != null and taskName != ''">
+            <if test="restoreData != null and restoreData != ''">
                 and  restore_data = #{restoreData}
             </if>
-            <if test="filePath != null and filePath != ''">
-                and  file_path = #{filePath}
+            <if test="secondaryTableName != null and secondaryTableName != ''">
+                and secondary_table_name = #{secondaryTableName}
+            </if>
+            <if test="secondaryTableId != null">
+                and  secondary_table_id = #{secondaryTableId}
+            </if>
+            <if test="secondaryTag != null">
+                and  secondary_tag = #{secondaryTag}
+            </if>
+            <if test="execute != null and execute != ''">
+                and execute = #{execute}
+            </if>
+            <if test="firstId != null and firstId != ''">
+                and  first_id = #{firstId}
+            </if>
+            <if test="secondaryDatabaseId != null and secondaryDatabaseId != ''">
+                and  secondary_database_id = #{secondaryDatabaseId}
+            </if>
+            <if test="belongTo != null and belongTo != ''">
+                and  belongTo = #{belongTo}
             </if>
         </where>
         order by create_time desc
@@ -101,8 +132,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into search.excute_record(condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,belongTo,restore_data,file_path)
-        values (#{conditionContent}, #{createTime}, #{isComplete}, #{resultTable}, #{resultType}, #{remark}, #{mailAddress}, #{executeStatus}, #{executeDescribe}, #{updateTime}, #{taskName}, #{belongTo}, #{restoreData}, #{filePath})
+        insert into search.excute_record(condition_content, create_time, is_complete, result_table, result_type, remark,mail_address,execute_statue,execute_describe,update_time,task_name,belongTo,restore_data,secondary_table_name,secondary_table_id,secondary_tag,execute,first_id,secondary_database_id)
+        values (#{conditionContent}, #{createTime}, #{isComplete}, #{resultTable}, #{resultType}, #{remark}, #{mailAddress}, #{executeStatus}, #{executeDescribe}, #{updateTime}, #{taskName}, #{belongTo}, #{restoreData}, #{secondaryTableName}, #{secondaryTableId}, #{secondaryTag}, #{execute}, #{firstId},#{secondaryDatabaseId})
     </insert>
 
     <!--通过主键修改数据-->
@@ -145,8 +176,26 @@
             <if test="restoreData != null and taskName != ''">
                 restore_data = #{restoreData},
             </if>
-            <if test="filePath != null and filePath != ''">
-                file_path = #{filePath},
+            <if test="secondaryTableName != null and secondaryTableName != ''">
+                and secondary_table_name = #{secondaryTableName}
+            </if>
+            <if test="secondaryTableId != null">
+                and  secondary_table_id = #{secondaryTableId}
+            </if>
+            <if test="secondaryTag != null">
+                and  secondary_tag = #{secondaryTag}
+            </if>
+            <if test="execute != null and execute != ''">
+                and execute = #{execute}
+            </if>
+            <if test="firstId != null and firstId != ''">
+                and  first_id = #{firstId}
+            </if>
+            <if test="secondaryDatabaseId != null and secondaryDatabaseId != ''">
+                and  secondary_database_id = #{secondaryDatabaseId}
+            </if>
+            <if test="belongTo != null and belongTo != ''">
+                and  belongTo = #{belongTo}
             </if>
         </set>
         where id = #{id}
@@ -157,8 +206,12 @@
         delete from search.excute_record where id = #{id}
     </delete>
     <select id="queryAllBelongTo" resultType="java.lang.String">
-        select distinct(belongTo) from search.excute_record
-
+        select distinct(belongTo) from search.excute_record where secondary_tag = #{secondaryTag}
     </select>
+
+    <select id="queryFirstIdByNameAndTag" resultMap="ExcuteRecordMap">
+        select * from search.excute_record where secondary_tag = 1 and secondary_table_name = #{secondaryTableName}
+    </select>
+
 
 </mapper>

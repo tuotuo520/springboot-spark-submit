@@ -71,13 +71,13 @@ public class ExcuteRecordController {
 
     /**
      * 根据表名查询执行结果
-     * @param id
+     * @param excuteRecord
      * @return
      */
     @ApiOperation("查询所包含的所有所属库")
     @PostMapping("queryAllBelongTo")
-    public Result<List<String>> queryAllBelongTo(){
-        return this.excuteRecordService.queryAllBelongTo();
+    public Result<List<String>> queryAllBelongTo(@RequestBody ExcuteRecord excuteRecord){
+        return this.excuteRecordService.queryAllBelongTo(excuteRecord);
     }
 
 
@@ -90,5 +90,17 @@ public class ExcuteRecordController {
     @PostMapping("queryByBelongTo")
     public Result<PageInfo<ExcuteRecord>> queryByBelongTo(@RequestBody ExcuteRecord id){
         return this.excuteRecordService.queryByBelongTo(id);
+    }
+
+
+    /**
+     * 根据表名查询执行结果
+     * @param id
+     * @return
+     */
+    @ApiOperation("判断表名在临时库是否存在")
+    @PostMapping("isTmpTableNameExist")
+    public Result<Boolean> isTmpTableNameExist(@RequestBody ExcuteRecord id){
+        return this.excuteRecordService.isTmpTableNameExist(id);
     }
 }

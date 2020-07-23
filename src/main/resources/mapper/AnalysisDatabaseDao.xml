@@ -11,24 +11,31 @@
     <!--查询单个-->
     <select id="queryById" resultMap="AnalysisDatabaseMap">
         select
-          id, database_name, remake
-        from search.analysis_database
+        id, database_name, remake
+        from
+            search.analysis_database
         where id = #{id}
     </select>
 
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AnalysisDatabaseMap">
-        select
-          id, database_name, remake
-        from search.analysis_database
-        limit #{offset}, #{limit}
-    </select>
+    <!--    &lt;!&ndash;查询指定行数据&ndash;&gt;-->
+    <!--    <select id="queryAllByLimit" resultMap="AnalysisDatabaseMap">-->
+    <!--        select-->
+    <!--          id, database_name, remake-->
+    <!--        from search.analysis_database-->
+    <!--        limit #{offset}, #{limit}-->
+    <!--    </select>-->
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AnalysisDatabaseMap">
         select
-          id, database_name, remake
-        from search.analysis_database
+        id, database_name, remake
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_database
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_database_tmp
+        </if>
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -50,7 +57,8 @@
 
     <!--通过主键修改数据-->
     <update id="update">
-        update search.analysis_database
+        update
+            search.analysis_database
         <set>
             <if test="databaseName != null and databaseName != ''">
                 database_name = #{databaseName},
@@ -64,7 +72,9 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from search.analysis_database where id = #{id}
+        delete from
+            search.analysis_database
+        where id = #{id}
     </delete>
 
 </mapper>

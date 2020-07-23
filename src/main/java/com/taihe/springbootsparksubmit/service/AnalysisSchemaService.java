@@ -17,26 +17,18 @@ public interface AnalysisSchemaService {
     /**
      * 通过ID查询单条数据
      *
-     * @param  主键
+     * @param analysisSchema
      * @return 实例对象
      */
-    Result<AnalysisSchema> queryById(Integer tableId );
+    Result<AnalysisSchema> queryById(AnalysisSchema analysisSchema);
 
     /**
      * 通过表id查询对应的字段
-     * @param tableId
+     *
+     * @param analysisSchema
      * @return
      */
     Result<List<AnalysisSchema>> querySchemasByTableId(AnalysisSchema analysisSchema);
-
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<AnalysisSchema> queryAllByLimit(int offset, int limit);
 
     /**
      * 新增数据
@@ -56,18 +48,19 @@ public interface AnalysisSchemaService {
 
     /**
      * 通过id更新字段
-     * @param id
+     *
+     * @param analysisSchema
      * @return
      */
-    Result<AnalysisSchema> updateSchemasById(AnalysisSchema id);
+    Result<AnalysisSchema> updateSchemasById(AnalysisSchema analysisSchema);
 
     /**
      * 通过主键删除数据
      *
-     * @param  主键
+     * @param analysisSchema
      * @return 是否成功
      */
-    boolean deleteById( );
+    boolean deleteById(AnalysisSchema analysisSchema);
 
 
 }

@@ -78,7 +78,7 @@ public interface ExcuteRecordService {
      * 查询结果记录中有多少belongTo
      * @return
      */
-    Result<List<String>> queryAllBelongTo();
+    Result<List<String>> queryAllBelongTo(ExcuteRecord excuteRecord);
 
 
     /**
@@ -86,5 +86,12 @@ public interface ExcuteRecordService {
      * @return
      */
     Result<PageInfo<ExcuteRecord>> queryByBelongTo(ExcuteRecord excuteRecord);
+
+    /**
+     * 判断是否存在该临时表名
+     * @param excuteRecord
+     * @return
+     */
+    Result<Boolean> isTmpTableNameExist(ExcuteRecord excuteRecord);
 
 }

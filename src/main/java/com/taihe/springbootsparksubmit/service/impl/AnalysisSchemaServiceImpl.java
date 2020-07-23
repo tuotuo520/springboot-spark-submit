@@ -24,35 +24,24 @@ public class AnalysisSchemaServiceImpl implements AnalysisSchemaService {
     /**
      * 通过ID查询该表下的所有字段
      *
-     * @param  主键
+     * @param  analysisSchema
      * @return 实例对象
      */
     @Override
-    public Result<List<AnalysisSchema>> querySchemasByTableId(AnalysisSchema tableId) {
-        return Result.ok(this.analysisSchemaDao.querySchemasByTableId(tableId));
+    public Result<List<AnalysisSchema>> querySchemasByTableId(AnalysisSchema analysisSchema) {
+        return Result.ok(this.analysisSchemaDao.querySchemasByTableId(analysisSchema));
     }
 
     /**
      * 通过ID查询单条数据
      *
-     * @param tableId@return 实例对象
+     * @param analysisSchema@return 实例对象
      */
     @Override
-    public Result<AnalysisSchema> queryById(Integer id) {
-        return Result.ok(this.analysisSchemaDao.queryById(id));
+    public Result<AnalysisSchema> queryById(AnalysisSchema analysisSchema) {
+        return Result.ok(this.analysisSchemaDao.queryById(analysisSchema));
     }
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    @Override
-    public List<AnalysisSchema> queryAllByLimit(int offset, int limit) {
-        return this.analysisSchemaDao.queryAllByLimit(offset, limit);
-    }
 
     /**
      * 新增数据
@@ -76,7 +65,7 @@ public class AnalysisSchemaServiceImpl implements AnalysisSchemaService {
     @Override
     public AnalysisSchema update(AnalysisSchema analysisSchema) {
         this.analysisSchemaDao.update(analysisSchema);
-        return this.analysisSchemaDao.queryById(analysisSchema.getId());
+        return this.analysisSchemaDao.queryById(analysisSchema);
     }
 
     /**
@@ -86,9 +75,9 @@ public class AnalysisSchemaServiceImpl implements AnalysisSchemaService {
      * @return
      */
     @Override
-    public Result<AnalysisSchema> updateSchemasById(AnalysisSchema id) {
-        this.analysisSchemaDao.update(id);
-        return Result.ok(this.analysisSchemaDao.queryById(id.getId()));
+    public Result<AnalysisSchema> updateSchemasById(AnalysisSchema analysisSchema) {
+        this.analysisSchemaDao.update(analysisSchema);
+        return Result.ok(this.analysisSchemaDao.queryById(analysisSchema));
     }
 
     /**
@@ -98,7 +87,7 @@ public class AnalysisSchemaServiceImpl implements AnalysisSchemaService {
      * @return 是否成功
      */
     @Override
-    public boolean deleteById( ) {
-        return this.analysisSchemaDao.deleteById() > 0;
+    public boolean deleteById(AnalysisSchema analysisSchema) {
+        return this.analysisSchemaDao.deleteById(analysisSchema) > 0;
     }
 }

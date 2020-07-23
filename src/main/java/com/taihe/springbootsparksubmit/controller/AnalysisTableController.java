@@ -29,16 +29,6 @@ public class AnalysisTableController {
     @Resource
     private AnalysisTableService analysisTableService;
 
-//    /**
-//     * 通过主键查询单条数据
-//     *
-//     * @param id 主键w
-//     * @return 单条数据
-//     */
-//    @GetMapping("selectOne")
-//    public AnalysisTable selectOne(Integer id) {
-//        return this.analysisTableService.queryById(id);
-//    }
 
     /**
      * 查询所有所属库
@@ -46,8 +36,8 @@ public class AnalysisTableController {
      */
     @GetMapping("queryAllBelongTo")
     @ApiOperation("获取所有所属库")
-    public Result<List<String>> queryAllBelongTo(){
-        return this.analysisTableService.queryAllBelongTo();
+    public Result<List<String>> queryAllBelongTo(AnalysisTable analysisTable){
+        return this.analysisTableService.queryAllBelongTo(analysisTable);
     }
 
     /**

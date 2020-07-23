@@ -31,21 +31,10 @@ public class AnalysisDatabaseServiceImpl implements AnalysisDatabaseService {
      * @return 实例对象
      */
     @Override
-    public Result<AnalysisDatabase> queryById(AnalysisDatabase id) {
-        return  Result.ok(this.analysisDatabaseDao.queryById(id));
+    public Result<AnalysisDatabase> queryById(AnalysisDatabase analysisDatabase) {
+        return Result.ok(this.analysisDatabaseDao.queryById(analysisDatabase));
     }
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    @Override
-    public List<AnalysisDatabase> queryAllByLimit(int offset, int limit) {
-        return this.analysisDatabaseDao.queryAllByLimit(offset, limit);
-    }
 
     /**
      * 新增数据
@@ -79,7 +68,7 @@ public class AnalysisDatabaseServiceImpl implements AnalysisDatabaseService {
      * @return 是否成功
      */
     @Override
-    public boolean deleteById(Integer id) {
-        return this.analysisDatabaseDao.deleteById(id) > 0;
+    public boolean deleteById(AnalysisDatabase analysisDatabase) {
+        return this.analysisDatabaseDao.deleteById(analysisDatabase) > 0;
     }
 }

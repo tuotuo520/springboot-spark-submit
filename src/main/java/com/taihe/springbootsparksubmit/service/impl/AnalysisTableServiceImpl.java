@@ -26,25 +26,14 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
     /**
      * 通过ID查询单条数据
      *
-     * @param id 主键
+     * @param analysisTable 主键
      * @return 实例对象
      */
     @Override
-    public AnalysisTable queryById(Integer id) {
-        return this.analysisTableDao.queryById(id);
+    public AnalysisTable queryById(AnalysisTable analysisTable) {
+        return this.analysisTableDao.queryById(analysisTable);
     }
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit  查询条数
-     * @return 对象列表
-     */
-    @Override
-    public List<AnalysisTable> queryAllByLimit(int offset, int limit) {
-        return this.analysisTableDao.queryAllByLimit(offset, limit);
-    }
 
     /**
      * 新增数据
@@ -68,7 +57,7 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
     @Override
     public AnalysisTable update(AnalysisTable analysisTable) {
         this.analysisTableDao.update(analysisTable);
-        return this.queryById(analysisTable.getId());
+        return this.queryById(analysisTable);
     }
 
     /**
@@ -78,8 +67,8 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
      * @return 是否成功
      */
     @Override
-    public boolean deleteById(Integer id) {
-        return this.analysisTableDao.deleteById(id) > 0;
+    public boolean deleteById(AnalysisTable analysisTable) {
+        return this.analysisTableDao.deleteById(analysisTable) > 0;
     }
 
     /**
@@ -88,8 +77,8 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
      * @return
      */
     @Override
-    public Result<List<String>> queryAllBelongTo() {
-        return Result.ok(this.analysisTableDao.queryAllBelongTo());
+    public Result<List<String>> queryAllBelongTo(AnalysisTable analysisTable) {
+        return Result.ok(this.analysisTableDao.queryAllBelongTo(analysisTable));
     }
 
 
@@ -107,11 +96,11 @@ public class AnalysisTableServiceImpl implements AnalysisTableService {
     /**
      * 修改数据
      *
-     * @param tableId@return 实例对象
+     * @param analysisTable@return 实例对象
      */
     @Override
     public Result<AnalysisTable> updateTableDescById(AnalysisTable analysisTable) {
         this.analysisTableDao.update(analysisTable);
-        return Result.ok(this.queryById(analysisTable.getId()));
+        return Result.ok(this.queryById(analysisTable));
     }
 }

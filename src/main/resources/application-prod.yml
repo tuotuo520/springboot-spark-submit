@@ -1,0 +1,104 @@
+server:
+  port: 8011
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
+    driver-class-name: com.mysql.cj.jdbc.Driver        # mysql8驱动  com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.0.45:3306/wxyx?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: Hgm123456
+    hikari:
+      connection-timeout: 30000       # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
+      minimum-idle: 5                 # 最小连接数
+      maximum-pool-size: 20           # 最大连接数
+      auto-commit: true               # 自动提交
+      idle-timeout: 600000            # 连接超时的最大时长（毫秒），超时则被释放（retired），默认:10分钟
+      pool-name: DateSourceHikariCP     # 连接池名字
+      max-lifetime: 1800000           # 连接的生命时长（毫秒），超时而且没被使用则被释放（retired），默认:30分钟 1800000ms
+      connection-test-query: SELECT 1
+  ############################ 邮件服务 #########################
+  mail:
+    host: 157.255.245.108 #SMTP服务器地址
+    username: tech@taiheiot.com #登陆账号
+    password: WuXvdNHFc96jnpRU #登陆密码（或授权码）
+    default-encoding: UTF-8
+    properties:
+      from: tech@taiheiot.com #邮件发信人（即真实邮箱）
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  ############################ KAFKA #########################
+  kafka:
+    bootstrap-servers: 172.16.0.26:9092
+#    bootstrap-servers: 192.168.1.245:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: search
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  ############################ REDIS #########################
+  redis:
+    host: ${REDIS_HOST:172.16.0.18}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:Hgm123456}
+    database: ${REDIS_DB:15}
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 1000
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.taihe.springbootsparksubmit.entity
+  global-config:
+    #数据库相关配置
+    db-config:
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: AUTO
+      logic-delete-value: -1
+      logic-not-delete-value: 0
+    banner: false
+  #原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+
+
+
+#task:
+appName: taihe_SearchData
+sparkHome: /opt/cloudera/parcels/CDH-6.0.1-1.cdh6.0.1.p0.590678/lib/spark
+appResource: /YunLiKe/jar/taihe/search/search_data-1.0-SNAPSHOT-jar-with-dependencies.jar
+mainClass: com.taihe.search.SearchHiveJob
+uploadAppName: taihe_CreateHive
+uploadMainClass: com.taihe.search.SparkOperationHive
+
+#upload
+#fileUplodPath: D://新建文件夹//
+fileUplodPath: /YunLiKe/jar/taihe/search/uploadfile
+hdfsFilePath: hdfs://cdh1:8022/log/flume_data/
+downloadHdfsPath: hdfs://cdh1:8022/log/flume_data/result/
+hdfsuri: hdfs://cdh1:8022/
+topics: searchcompletion
+
+#日志打印
+logging:
+  level:
+    com.taihe.springbootsparksubmit.dao: DEBUG

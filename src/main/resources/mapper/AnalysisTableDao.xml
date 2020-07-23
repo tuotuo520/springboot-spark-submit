@@ -14,32 +14,43 @@
     <!--查询单个-->
     <select id="queryById" resultMap="AnalysisTableMap">
         select
-          id, table_name, table_describe, databaseId, remake,belongTo
-        from search.analysis_table
+        id, table_name, table_describe, databaseId, remake,belongTo
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
         where id = #{id}
     </select>
 
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AnalysisTableMap">
-        select
-          id, table_name, table_describe, databaseId, remake,belongTo
-        from search.analysis_table
-        limit #{offset}, #{limit}
-    </select>
 
     <!-- 查询所有的属实库 -->
     <select id="queryAllBelongTo" resultType="java.lang.String">
         select
         distinct (belongTo) as belongTo
-        from search.analysis_table
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
     </select>
 
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AnalysisTableMap">
         select
-          id, table_name, table_describe, databaseId, remake,belongTo
-        from search.analysis_table
+        id, table_name, table_describe, databaseId, remake,belongTo
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -64,13 +75,25 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into search.analysis_table(table_name, table_describe, databaseId, remake,belongTo)
+        insert into
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>(table_name, table_describe, databaseId, remake,belongTo)
         values (#{tableName}, #{tableDescribe}, #{databaseid}, #{remake}, #{belongTo})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update search.analysis_table
+        update
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
         <set>
             <if test="tableName != null and tableName != ''">
                 table_name = #{tableName},
@@ -93,6 +116,35 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from search.analysis_table where id = #{id}
+        delete from
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
+        where id = #{id}
     </delete>
+
+    <select id="isTmpTableNameExist" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+            search.analysis_table_tmp
+        where table_name = #{tableName}
+    </select>
+
+    <select id="queryTableInfoByTableName" resultMap="AnalysisTableMap">
+        select
+        id, table_name, table_describe, databaseId, remake,belongTo
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_table
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_table_tmp
+        </if>
+        where databaseId = #{databaseid}
+        and table_name = #{tableName}
+    </select>
 </mapper>

@@ -46,7 +46,9 @@ public class KafkaMessageListener {
         ExcuteRecord excuteRecord = new ExcuteRecord();
         if (!StringUtils.isEmpty(searchStatus) && "true".equals(searchStatus)) {
             excuteRecord.setIsComplete(1);
-        } else {
+        } else if(!StringUtils.isEmpty(searchStatus) && "false".equals(searchStatus)) {
+            excuteRecord.setIsComplete(2);
+        }else{
             excuteRecord.setIsComplete(0);
         }
         excuteRecord.setId(getNum(tableName));

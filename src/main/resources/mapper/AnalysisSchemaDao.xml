@@ -14,31 +14,50 @@
     <!--查询单个-->
     <select id="queryById" resultMap="AnalysisSchemaMap">
         select
-          id, field_name, fileld_describe, field_type, tableId, remake
-        from search.analysis_schema
+        id, field_name, fileld_describe, field_type, tableId, remake
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_schema
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_schema_tmp
+        </if>
         where id = #{id}
     </select>
 
     <select id="querySchemasByTableId" resultMap="AnalysisSchemaMap">
         select
         id, field_name, fileld_describe, field_type, tableId, remake
-        from search.analysis_schema
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_schema
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_schema_tmp
+        </if>
         where tableId = #{tableId}
     </select>
 
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AnalysisSchemaMap">
+    <select id="querySchemaInfoByTableName" resultMap="AnalysisSchemaMap">
         select
-          id, field_name, fileld_describe, field_type, tableId, remake
-        from search.analysis_schema
-        limit #{offset}, #{limit}
+        id, field_name, fileld_describe, field_type, tableId, remake
+        from
+            search.analysis_schema
+        where tableId = #{tableId}
+        and field_name = #{fieldName}
     </select>
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AnalysisSchemaMap">
         select
-          id, field_name, fileld_describe, field_type, tableId, remake
-        from search.analysis_schema
+        id, field_name, fileld_describe, field_type, tableId, remake
+        from
+        <if test="secondaryTag == 0">
+            search.analysis_schema
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_schema_tmp
+        </if>
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -63,13 +82,25 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into search.analysis_schema(field_name, fileld_describe, field_type,tableId, remake)
+        insert into
+        <if test="secondaryTag == 0">
+            search.analysis_schema
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_schema_tmp
+        </if>(field_name, fileld_describe, field_type,tableId, remake)
         values (#{fieldName}, #{fileldDescribe}, #{fieldType},#{tableId}, #{remake})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update search.analysis_schema
+        update
+        <if test="secondaryTag == 0">
+            search.analysis_schema
+        </if>
+        <if test="secondaryTag != 0">
+            search.analysis_schema_tmp
+        </if>
         <set>
             <if test="fieldName != null and fieldName != ''">
                 field_name = #{fieldName},
@@ -84,12 +115,12 @@
                 remake = #{remake},
             </if>
         </set>
-<!--        where  = #{}-->
+        <!--        where  = #{}-->
     </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
-<!--        delete from search.analysis_schema where  = #{}-->
+        <!--        delete from search.analysis_schema where  = #{}-->
     </delete>
 
 </mapper>

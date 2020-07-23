@@ -20,16 +20,8 @@ public interface AnalysisTableService {
      * @param id 主键
      * @return 实例对象
      */
-    AnalysisTable queryById(Integer id);
+    AnalysisTable queryById(AnalysisTable analysisTable);
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<AnalysisTable> queryAllByLimit(int offset, int limit);
 
     /**
      * 新增数据
@@ -53,13 +45,13 @@ public interface AnalysisTableService {
      * @param id 主键
      * @return 是否成功
      */
-    boolean deleteById(Integer id);
+    boolean deleteById(AnalysisTable analysisTable);
 
     /**
      * 查询所有所属库
      * @return
      */
-    Result<List<String>> queryAllBelongTo();
+    Result<List<String>> queryAllBelongTo(AnalysisTable analysisTable);
 
     /**
      * 查询该库下所有表
