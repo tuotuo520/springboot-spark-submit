@@ -1,5 +1,6 @@
 package com.taihe.springbootsparksubmit.entity;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -26,7 +27,8 @@ public class AnalysisTable implements Serializable {
     private String remake;
     @ApiModelProperty(value = "属于哪个数据库")
     private String belongTo;
-
+    @ApiModelProperty(value = "//0代表非二次分析，1代表二次分析的首次分析，2代表二次分析的再次分析")
+    private Integer secondaryTag;
 
     public Integer getId() {
         return id;
@@ -75,4 +77,15 @@ public class AnalysisTable implements Serializable {
     public void setBelongTo(String belongTo) {
         this.belongTo = belongTo;
     }
+
+
+    public Integer getSecondaryTag() {
+        return secondaryTag;
+    }
+
+    public void setSecondaryTag(Integer secondaryTag) {
+        this.secondaryTag = secondaryTag;
+    }
+
+
 }

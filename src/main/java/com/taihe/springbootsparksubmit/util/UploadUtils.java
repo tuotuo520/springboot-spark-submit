@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -74,6 +75,8 @@ public class UploadUtils {
     private SparkStarter sparkStarter;
     @Resource
     private HdfsUtils hdfsUtils;
+    @Resource
+    private RedisUtil redisUtil;
 
 
     public static UploadUtils uploadUtils;
@@ -101,7 +104,6 @@ public class UploadUtils {
         }
         String fileName = file.getOriginalFilename();
 
-        int size = (int) file.getSize();
         File uploadFile = new File(UPLOAD_FILE_PATH + fileName);
         String fileType = uploadFile.getName().substring(uploadFile.getName().lastIndexOf("."));
         file.transferTo(uploadFile);
@@ -142,7 +144,7 @@ public class UploadUtils {
                 lastCellNum = (short) content.split(",").length;
             }
         }
-        long nowDate = new Date().getTime();
+        long nowDate = System.currentTimeMillis();
 
 
         //根据导入的文件先生成表名
@@ -156,7 +158,7 @@ public class UploadUtils {
         in.close();
         uploadFile.delete();
         //插入成功后获取id缓存到redis
-        if (!hasKey(RedisKeyConstants.getDatabaseKey(newDatabaseName))) {
+        if (!redisUtil.hasKey(RedisKeyConstants.getDatabaseKey(newDatabaseName))) {
             AnalysisDatabase analysisDatabase = new AnalysisDatabase();
             //第一次插入先插入库表 获取到id
             analysisDatabase.setDatabaseName(newDatabaseName);
@@ -197,21 +199,7 @@ public class UploadUtils {
     }
 
 
-    /**
-     * 判断key是否存在
-     *
-     * @param key 键
-     * @return true 存在 false不存在
-     */
-    public boolean hasKey(String key) {
-        Assert.notNull(key, "non null key required");
-        try {
-            return StringUtils.isEmpty(key) ? false : stringRedisTemplate.hasKey(key);
-        } catch (Exception e) {
-            log.error("Exception" + e);
-            return false;
-        }
-    }
+
 
     /**
      * 下载文件
@@ -222,7 +210,7 @@ public class UploadUtils {
      * @throws Exception
      */
     public Object downloadFile(HttpServletResponse response, ExcuteRecord excuteRecord) throws Exception {
-        excuteRecord = this.excuteRecordDao.queryById(excuteRecord.getId());
+        excuteRecord = this.excuteRecordDao.queryByIdWithNoTag(excuteRecord.getId());
         FileSystem fs = this.hdfsUtils.getFs();
         //hdfs目标路径
         Path sourcePath = new Path(DOWNLOAD_HDFS_PATH + "searchresult_" + excuteRecord.getId() + "/");
@@ -245,6 +233,7 @@ public class UploadUtils {
 //                String rename = pathList.get(i).toString().replace(pathList.get(i).toString().substring(pathList.get(i).toString().lastIndexOf("/")+1,pathList.get(i).toString().lastIndexOf(".csv")),excuteRecord.getExecuteDescribe()+"_"+i);
 //                renamePathList.add(new Path(this.rename(pathList.get(i).toString(),rename,fs)));
 //            }
+
             for (int i = 0; i < pathList.size(); i++) {
                 InputStream in = fs.open(pathList.get(i));
                 String name = pathList.get(i).toString().substring(pathList.get(i).toString().lastIndexOf("/") + 1);

@@ -42,6 +42,9 @@ public class AnalysisSchema implements Serializable {
     @ApiModelProperty(value = "备注(预留字段)")
     private String remake;
 
+    @ApiModelProperty(value = "//0代表非二次分析，1代表二次分析的首次分析，2代表二次分析的再次分析")
+    private Integer secondaryTag;
+
 
     public Integer getId() {
         return id;
@@ -91,5 +94,13 @@ public class AnalysisSchema implements Serializable {
 
     public void setTableId(String tableId) {
         this.tableId = tableId;
+    }
+
+    public Integer getSecondaryTag() {
+        return secondaryTag;
+    }
+
+    public void setSecondaryTag(Integer secondaryTag) {
+        this.secondaryTag = secondaryTag;
     }
 }

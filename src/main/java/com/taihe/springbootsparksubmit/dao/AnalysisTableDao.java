@@ -3,7 +3,7 @@ package com.taihe.springbootsparksubmit.dao;
 
 import com.taihe.springbootsparksubmit.entity.AnalysisTable;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -18,19 +18,18 @@ public interface AnalysisTableDao {
     /**
      * 通过ID查询单条数据
      *
-     * @param id 主键
+     * @param analysisTable 主键
      * @return 实例对象
      */
-    AnalysisTable queryById(Integer id);
+    AnalysisTable queryById(AnalysisTable analysisTable);
 
     /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
+     * 通过名称和id查询是否存在
+     * @param analysisTable
+     * @return
      */
-    List<AnalysisTable> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    AnalysisTable queryByNameAndDBid(AnalysisTable analysisTable);
+
 
 
     /**
@@ -46,7 +45,7 @@ public interface AnalysisTableDao {
      * 查询所有所属库
      * @return
      */
-    List<String> queryAllBelongTo();
+    List<String> queryAllBelongTo(AnalysisTable analysisTable);
 
     /**
      * 新增数据
@@ -70,8 +69,22 @@ public interface AnalysisTableDao {
      * @param id 主键
      * @return 影响行数
      */
-    int deleteById(Integer id);
+    int deleteById(AnalysisTable analysisTable);
+
+    /**
+     * 通过库id和bi表名查询表信息
+   *
+     * @param id 主键
+     * @return 影响行数
+     */
+    AnalysisTable queryTableInfoByTableName(AnalysisTable analysisTable);
 
 
+    /**
+     * 判断该字段是否存在
+     * @param analysisTable
+     * @return
+     */
+    Integer isTmpTableNameExist(AnalysisTable analysisTable);
 
 }

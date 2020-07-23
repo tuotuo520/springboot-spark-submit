@@ -22,6 +22,7 @@ public class AnalysisDatabase implements Serializable {
     private String remake;
 
 
+
     public Integer getId() {
         return id;
     }
@@ -45,5 +46,4 @@ public class AnalysisDatabase implements Serializable {
     public void setRemake(String remake) {
         this.remake = remake;
     }
-
 }

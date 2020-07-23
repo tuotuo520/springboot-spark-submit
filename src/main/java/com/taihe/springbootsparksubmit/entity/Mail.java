@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.thymeleaf.context.Context;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 @ApiModel
 public class Mail {
@@ -21,6 +23,7 @@ public class Mail {
     /**
      * 邮件接收人 （多个邮箱则用逗号","隔开）
      */
+    @Pattern(regexp = "^(.+)@(.+)$",message = "邮箱的格式不合法")
     @ApiModelProperty(value = "邮件接收人 （多个邮箱则用逗号\",\"隔开）")
     private String receiver;
     /**

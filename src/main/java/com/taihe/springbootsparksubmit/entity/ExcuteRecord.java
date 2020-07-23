@@ -1,5 +1,6 @@
 package com.taihe.springbootsparksubmit.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.taihe.springbootsparksubmit.result.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -78,6 +79,11 @@ public class ExcuteRecord extends PageRequest implements Serializable {
      */
     @ApiModelProperty(value = "任务名称")
     private String taskName;
+    /**
+     * 是否二次分析
+     */
+    @ApiModelProperty(value = "//0代表非二次分析，1代表二次分析")
+    private Integer secondaryTag;
 
     public String getFilePath() {
         return filePath;
@@ -111,6 +117,16 @@ public class ExcuteRecord extends PageRequest implements Serializable {
 
     @ApiModelProperty(value = "恢复数据用")
     private String restoreData;
+    @ApiModelProperty(value = "二次分析表名")
+    private String secondaryTableName;
+    @ApiModelProperty(value = "二次分析对应的表id")
+    private Integer secondaryTableId;
+    @ApiModelProperty(value = "//二次分析，0代表立即执行，1代表二次分析的二次执行")
+    private Integer execute;
+    @ApiModelProperty(value = "二次分析前一次的结果id")
+    private Integer firstId;
+    @ApiModelProperty(value = "二次分析需要的表id")
+    private Integer secondaryDatabaseId;
 
     public String getExecuteStatus() {
         return executeStatus;
@@ -206,5 +222,56 @@ public class ExcuteRecord extends PageRequest implements Serializable {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    public Integer getSecondaryTag() {
+        return secondaryTag;
+    }
+
+    public void setSecondaryTag(Integer secondaryTag) {
+        this.secondaryTag = secondaryTag;
+    }
+
+
+    public String getSecondaryTableName() {
+        return secondaryTableName;
+    }
+
+    public void setSecondaryTableName(String secondaryTableName) {
+        this.secondaryTableName = secondaryTableName;
+    }
+
+    public Integer getSecondaryTableId() {
+        return secondaryTableId;
+    }
+
+    public void setSecondaryTableId(Integer secondaryTableId) {
+        this.secondaryTableId = secondaryTableId;
+    }
+
+    public Integer getExecute() {
+        return execute;
+    }
+
+    public void setExecute(Integer execute) {
+        this.execute = execute;
+    }
+
+    public Integer getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(Integer firstId) {
+        this.firstId = firstId;
+    }
+
+
+
+    public Integer getSecondaryDatabaseId() {
+        return secondaryDatabaseId;
+    }
+
+    public void setSecondaryDatabaseId(Integer secondaryDatabaseId) {
+        this.secondaryDatabaseId = secondaryDatabaseId;
     }
 }
